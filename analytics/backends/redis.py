@@ -15,18 +15,20 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
-from analytics.backends.base import BaseAnalyticsBackend
-
-from nydus.db import create_cluster
-
 from calendar import monthrange
-from dateutil.relativedelta import relativedelta
-from dateutil import rrule
-
 import datetime
 import itertools
 import calendar
 import types
+
+import six
+from dateutil.relativedelta import relativedelta
+from dateutil import rrule
+from nydus.db import create_cluster
+from six.moves import reduce
+
+
+from analytics.backends.base import BaseAnalyticsBackend
 
 
 class Redis(BaseAnalyticsBackend):
@@ -187,8 +189,8 @@ class Redis(BaseAnalyticsBackend):
         :param inc_amt: The amount you want to increment the ``metric`` for the ``unique_identifier``
         :return: ``True`` if successful ``False`` otherwise
         """
-        metric = [metric] if isinstance(metric, basestring) else metric
-        unique_identifier = [unique_identifier] if not isinstance(unique_identifier, (types.ListType, types.TupleType, types.GeneratorType,)) else unique_identifier
+        metric = [metric] if isinstance(metric, six.string_types) else metric
+        unique_identifier = [unique_identifier] if not isinstance(unique_identifier, (list, tuple, types.GeneratorType)) else unique_identifier
         results = []
         if date is None:
             date = datetime.date.today()
@@ -425,8 +427,8 @@ class Redis(BaseAnalyticsBackend):
         :param sync_agg: Boolean used to determine if week and month metrics should be updated
         :param update_counter: Boolean used to determine if overall counter should be updated
         """
-        metric = [metric] if isinstance(metric, basestring) else metric
-        unique_identifier = [unique_identifier] if not isinstance(unique_identifier, (types.ListType, types.TupleType, types.GeneratorType,)) else unique_identifier
+        metric = [metric] if isinstance(metric, six.string_types) else metric
+        unique_identifier = [unique_identifier] if not isinstance(unique_identifier, (list, tuple, types.GeneratorType)) else unique_identifier
         results = []
         with self._analytics_backend.map() as conn:
             for uid in unique_identifier:
@@ -477,8 +479,8 @@ class Redis(BaseAnalyticsBackend):
         :param start_date: Date syncing starts
         :param end_date: Date syncing end
         """
-        metric = [metric] if isinstance(metric, basestring) else metric
-        unique_identifier = [unique_identifier] if not isinstance(unique_identifier, (types.ListType, types.TupleType, types.GeneratorType,)) else unique_identifier
+        metric = [metric] if isinstance(metric, six.string_types) else metric
+        unique_identifier = [unique_identifier] if not isinstance(unique_identifier, (list, tuple, types.GeneratorType)) else unique_identifier
         closest_monday_from_date = self._get_closest_week(start_date)
         num_weeks = self._num_weeks(start_date, end_date)
         metric_key_date_range = self._get_weekly_date_range(closest_monday_from_date, datetime.timedelta(weeks=num_weeks))
@@ -510,8 +512,8 @@ class Redis(BaseAnalyticsBackend):
         :param start_date: Date syncing starts
         :param end_date: Date syncing end
         """
-        metric = [metric] if isinstance(metric, basestring) else metric
-        unique_identifier = [unique_identifier] if not isinstance(unique_identifier, (types.ListType, types.TupleType, types.GeneratorType,)) else unique_identifier
+        metric = [metric] if isinstance(metric, six.string_types) else metric
+        unique_identifier = [unique_identifier] if not isinstance(unique_identifier, (list, tuple, types.GeneratorType)) else unique_identifier
         num_months = self._num_months(start_date, end_date)
         first_of_month = datetime.date(year=start_date.year, month=start_date.month, day=1)
         metric_key_date_range = self._get_weekly_date_range(

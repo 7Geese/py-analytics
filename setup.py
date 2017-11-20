@@ -17,6 +17,7 @@ setup(
         'nydus>=0.10.6',
         'redis>=2.7.2',
         'python-dateutil>=1.5, !=2.0',
+        'six',
     ],
     tests_require=[
         'nose>=1.0',
